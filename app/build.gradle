@@ -10,6 +10,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {
@@ -21,9 +22,28 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+
+
+    // Constraint Layout
+    def constraintLayoutVersion = "1.1.3"
+    implementation "androidx.constraintlayout:constraintlayout:$constraintLayoutVersion"
+
+
+    // appCompat version
+    def supportLibraryVersion = "1.1.0"
+    implementation "androidx.appcompat:appcompat:$supportLibraryVersion"
+    implementation "androidx.recyclerview:recyclerview:$supportLibraryVersion"
+
+
+
+    def designSupportVersion = '1.0.0'
+    implementation "com.google.android.material:material:$designSupportVersion" //For Support Library: android.support.* to androidx.*
+    implementation "androidx.cardview:cardview:$designSupportVersion" //For Design Library: android.design.** to com.google.android.material.*
+
+
+
+
 }
