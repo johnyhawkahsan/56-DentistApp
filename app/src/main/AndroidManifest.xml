@@ -5,9 +5,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/dentist_app_icon_square"
+        android:icon="@mipmap/dentist_icon_adaptive"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/dentist_app_icon"
+        android:roundIcon="@mipmap/dentist_icon_adaptive_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity

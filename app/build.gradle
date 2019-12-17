@@ -38,12 +38,16 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview:$supportLibraryVersion"
 
 
-
     def designSupportVersion = '1.0.0'
     implementation "com.google.android.material:material:$designSupportVersion" //For Support Library: android.support.* to androidx.*
     implementation "androidx.cardview:cardview:$designSupportVersion" //For Design Library: android.design.** to com.google.android.material.*
 
 
+    def navigationVersion = '2.1.0'
+    implementation "androidx.navigation:navigation-fragment:$navigationVersion"
+    implementation "androidx.navigation:navigation-ui:$navigationVersion"
+
+    implementation "androidx.lifecycle:lifecycle-extensions:2.1.0"
 
 
 }

@@ -22,6 +22,7 @@
 
         <TextView
             android:id="@+id/title_price"
+            android:text="Demo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
@@ -31,6 +32,7 @@
 
         <TextView
             android:id="@+id/title_time_label"
+            android:text="Demo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
@@ -41,6 +43,8 @@
 
         <TextView
             android:id="@+id/title_date_label"
+            android:text="Demo"
+
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@id/title_time_label"
