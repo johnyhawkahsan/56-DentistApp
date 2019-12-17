@@ -1,7 +1,8 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
+    <style name="AppTheme"
+        parent="Theme.AppCompat.Light.NoActionBar"> <!-- Instead of using "Theme.MaterialComponents.Light.DarkActionBar", I used this because this caused error " This Activity already has an action bar supplied by the window decor."-->
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/blueIsh</item>          <!-- Changes color of Action bar -->
         <item name="colorPrimaryDark">@color/darkerBlue</item>   <!-- Changes color of Title bar -->
@@ -11,10 +12,8 @@
     <!-- Splash screen styling-->
     <style
         name="splashScreenTheme"
-        parent="@android:style/Theme.DeviceDefault.Light.DarkActionBar">
+        parent="@android:style/Theme.DeviceDefault.Light.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_screen</item>
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
     </style>
 
 
