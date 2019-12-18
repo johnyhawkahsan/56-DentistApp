@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 28
@@ -11,6 +12,7 @@ android {
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -22,10 +24,12 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
+    implementation 'com.android.support:multidex:1.0.3'
 
     // Constraint Layout
     def constraintLayoutVersion = "1.1.3"
@@ -39,8 +43,10 @@ dependencies {
 
 
     def designSupportVersion = '1.0.0'
-    implementation "com.google.android.material:material:$designSupportVersion" //For Support Library: android.support.* to androidx.*
-    implementation "androidx.cardview:cardview:$designSupportVersion" //For Design Library: android.design.** to com.google.android.material.*
+    implementation "com.google.android.material:material:$designSupportVersion"
+    //For Support Library: android.support.* to androidx.*
+    implementation "androidx.cardview:cardview:$designSupportVersion"
+    //For Design Library: android.design.** to com.google.android.material.*
 
 
     def navigationVersion = '2.1.0'
@@ -54,5 +60,10 @@ dependencies {
     def glideVersion = '4.10.0'
     implementation "com.github.bumptech.glide:glide:$glideVersion"
     annotationProcessor "com.github.bumptech.glide:compiler:$glideVersion"
+
+    // FireBase libraries
+    def firebaseVersion = '17.1.2'
+    implementation "com.google.firebase:firebase-firestore:$firebaseVersion"
+    //implementation "com.google.firebase:firebase-auth:$firebaseVersion"
 
 }

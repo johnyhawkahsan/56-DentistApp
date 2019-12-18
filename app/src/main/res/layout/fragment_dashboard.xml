@@ -2,15 +2,13 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <LinearLayout
         android:orientation="vertical"
         android:gravity="center"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".MainActivity"
@@ -59,14 +57,33 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
+            android:id="@+id/btnStoreData"
             style="@style/Widget.MaterialComponents.Button"
-            android:layout_width="50sp"
+            android:layout_width="90sp"
             android:layout_height="50sp"
-            android:id="@+id/signInButton"
-            android:text="Sign in"
-            app:icon="@drawable/dentist_app_icon_nobcg"
-            app:iconPadding="2dp"
-            app:cornerRadius="16dp"/>
+            android:text="Save"
+            android:textSize="20sp"
+            app:cornerRadius="30dp"
+            app:iconPadding="2dp" />
+
+        <Button
+            android:id="@+id/btnRetrieveData"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="120sp"
+            android:layout_height="50sp"
+            android:text="Retrieve"
+            android:textSize="20sp"
+            app:cornerRadius="30dp"
+            app:iconPadding="2dp" />
+
+        <TextView
+            android:id="@+id/retrievedData"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/default_margin"
+            android:text="Sample"
+            android:backgroundTint="@color/blueIsh"/>
+
 
     </LinearLayout>
 
