@@ -15,7 +15,8 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".account.LoginActivity">
+            android:name=".account.LoginActivity"
+            android:theme="@style/splashScreenTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
@@ -24,8 +25,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
-            android:theme="@style/splashScreenTheme"/>
+            android:name=".MainActivity"/>
         <activity android:name=".account.RegisterActivity"/>
 
     </application>

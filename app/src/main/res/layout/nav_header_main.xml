@@ -37,12 +37,14 @@
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/nav_header_vertical_spacing"
             android:text="name"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+            android:textColor="@color/Black"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
         <TextView
             android:id="@+id/profileInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/Black"
             android:text="info" />
 
     </LinearLayout>

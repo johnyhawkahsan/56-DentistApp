@@ -5,11 +5,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -32,6 +32,10 @@ public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = LoginActivity.class.getSimpleName();
 
+    private static int SPLASH_TIMEOUT = 2000; //This is 2 seconds
+    Handler splashHandler = new Handler();
+
+
     // Firebase
     private FirebaseAuth.AuthStateListener mAuthStateListener;
 
@@ -45,8 +49,27 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        // To add appropriate delay for splashScreen to stay there
+        try{
+            Thread.sleep(SPLASH_TIMEOUT);
+        } catch (Exception e){
+            Log.d(TAG, "onCreate: e = " + e);
+        }
+
+        // Make sure this is before calling super.onCreate
+        setTheme(R.style.AppTheme);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login); //Uses activity_login layout
+
+        splashHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        }, SPLASH_TIMEOUT);
+
 
         // defining our widgets
         mLogo = findViewById(R.id.logo);
@@ -109,6 +132,7 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
 
         // if login button is clicked, we check text entered and then use FirebaseAuth to sign in user
         mLogin.setOnClickListener(new View.OnClickListener() {

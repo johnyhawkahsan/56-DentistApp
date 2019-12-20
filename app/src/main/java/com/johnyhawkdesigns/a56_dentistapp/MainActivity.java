@@ -1,6 +1,5 @@
 package com.johnyhawkdesigns.a56_dentistapp;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -9,34 +8,27 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.google.firebase.auth.FirebaseAuth;
+import com.johnyhawkdesigns.a56_dentistapp.account.LoginActivity;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private static int SPLASH_TIMEOUT = 2000; //This is 2 seconds
-    Handler splashHandler = new Handler();
+
 
     private AppBarConfiguration mAppBarConfiguration;
 
@@ -47,26 +39,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        // To add appropriate delay for splashScreen to stay there
-        try{
-            Thread.sleep(SPLASH_TIMEOUT);
-        } catch (Exception e){
-            Log.d(TAG, "onCreate: e = " + e);
-        }
-
-        // Make sure this is before calling super.onCreate
-        setTheme(R.style.AppTheme);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         
-        splashHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-
-            }
-        }, SPLASH_TIMEOUT);
 
         // Setup toolbar for app
         Toolbar toolbar = findViewById(R.id.toolbar);  // Note: Inside styles.xml, we defined AppTheme.NoActionBar and used inside AndroidMANIFEST for MainActivity's theme @style/AppTheme.NoActionBar
@@ -80,8 +57,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Passing each menu ID as a set of Ids because each menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home
-                //R.id.nav_gallery,
+                R.id.nav_home,
+                R.id.nav_profile
                 )
                 .setDrawerLayout(drawer)
                 .build();
@@ -128,9 +105,35 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
+
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will automatically handle clicks on the Home/Up button, so long as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.logout) {
+
+            Log.d(TAG, "onOptionsItemSelected: logout");
+            FirebaseAuth.getInstance().signOut();
+            finish(); // Finish this activity
+
+            //Redirect the signed out user to Login activity
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
 
     //This method is called whenever the user chooses to navigate Up within your application's activity hierarchy from the action bar.
     //If a parent was specified in the manifest for this activity or an activity-alias to it, default Up navigation will be handled automatically.
