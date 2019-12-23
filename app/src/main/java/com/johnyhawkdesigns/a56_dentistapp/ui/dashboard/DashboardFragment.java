@@ -42,9 +42,10 @@ public class DashboardFragment extends Fragment {
     TextView tvRetrievedData;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-        dashboardViewModel = ViewModelProviders.of(this).get(DashboardViewModel.class);
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
+        dashboardViewModel = ViewModelProviders.of(this).get(DashboardViewModel.class);
+
+        Log.d(TAG, "onCreateView: DashboardFragment");
 
         final TextView textView = view.findViewById(R.id.textView3);
         dashboardViewModel.getText().observe(this, new Observer<String>() {
