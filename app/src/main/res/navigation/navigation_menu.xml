@@ -11,12 +11,31 @@
         android:id="@+id/nav_dashboard"
         android:name="com.johnyhawkdesigns.a56_dentistapp.ui.dashboard.DashboardFragment"
         android:label="Dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        tools:layout="@layout/fragment_dashboard" >
+        <action
+            android:id="@+id/action_nav_dashboard_to_nav_profile"
+            app:destination="@id/nav_profile" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_profile"
         android:name="com.johnyhawkdesigns.a56_dentistapp.ui.profile.ProfileFragment"
         android:label="Profile"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_nav_profile_to_editProfileDialogue"
+            app:destination="@+id/nav_edit_profile_dialog"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+    </fragment>
+
+
+    <dialog
+        android:id="@+id/nav_edit_profile_dialog"
+        android:name="com.johnyhawkdesigns.a56_dentistapp.ui.profile.EditProfileDialogue"
+        android:label="dialogue_edit_profile"
+        tools:layout="@layout/dialogue_edit_profile" />
 
 </navigation>

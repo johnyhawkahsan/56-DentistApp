@@ -2,6 +2,7 @@ package com.johnyhawkdesigns.a56_dentistapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -50,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar); // I had error at this line after using splashscreen, so I used Theme.AppCompat.Light.NoActionBar in styles for AppTheme
 
         // Setup DrawerLayout and NavigationView
-        DrawerLayout drawer = findViewById(R.id.drawer_layout); // androidx.drawerlayout.widget.DrawerLayout inside activity_main.xml wich also includes (AppBarMain + NavigationView)
+        final DrawerLayout drawer = findViewById(R.id.drawer_layout); // androidx.drawerlayout.widget.DrawerLayout inside activity_main.xml wich also includes (AppBarMain + NavigationView)
         NavigationView navigationView = findViewById(R.id.nav_view);  // com.google.android.material.navigation.NavigationView inside activity_main.xml
         View headerView = navigationView.getHeaderView(0); // this is used to get TextView's and ImageView's inside our NavigationView
 
@@ -62,9 +63,11 @@ public class MainActivity extends AppCompatActivity {
                 )
                 .setDrawerLayout(drawer)
                 .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+
+        // Setup Navigation Component controller
+        final NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
-        NavigationUI.setupWithNavController(navigationView, navController);
+        NavigationUI.setupWithNavController(navigationView, navController); // Register NavigationView with NavController so we may use menu id's in navigation_menu
 
         // -------------Setup Widgets inside NavigationView -> HeaderView ------------------ //
         profileName = headerView.findViewById(R.id.profileName); // instead of using only (findViewByID), we use (headerView.findViewByID)
@@ -72,6 +75,14 @@ public class MainActivity extends AppCompatActivity {
         navHeaderBackground = headerView.findViewById(R.id.img_header_bg);
         navHeaderProfilePic = headerView.findViewById(R.id.profilePic);
 
+        // redirect to Profile fragment once someone click on profile icon
+        navHeaderProfilePic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navController.navigate(R.id.nav_profile); //navigate to profile fragment using "NAVCONTROLLER"
+                drawer.closeDrawer(GravityCompat.START); // close drawer programmatically
+            }
+        });
 
         profileName.setText("Muhammad Ahsan");
         profileInfo.setText("johnyHawkAhsan@gmail.com");
