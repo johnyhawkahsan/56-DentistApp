@@ -28,10 +28,16 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.johnyhawkdesigns.a56_dentistapp.account.LoginActivity;
 import com.johnyhawkdesigns.a56_dentistapp.models.Profile;
+
+import java.util.Collection;
 
 public class MainActivity extends AppCompatActivity
                 implements IMainActivity{
@@ -182,8 +188,46 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    @Override
+    public Profile getThisUsersProfile() {
+        Log.d(TAG, "getThisUsersProfile: We need to retrieve Profile of Current User");
+
+        final Profile[] userProfile = {new Profile()};
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        //You can think of DocumentReference as an object and CollectionReference as a list of objects.
+        //// Create a reference to the profiles collection
+        CollectionReference profilesCollectionReference = db.collection("profiles");
+
+        //Searching functionality is a lot better in FireStore, it indexes all the data = First need to "Index" data in Console
+        // Create a query against the collection
+        Query profileQuery = profilesCollectionReference
+                .whereEqualTo("user_id", currentUserID);
+
+        profileQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()){
+                    Log.d(TAG, "onComplete: task.isSuccessful() = " + task.isSuccessful());
+
+                    //Loop through all the received data and add to our list of objects
+                    for (DocumentSnapshot queryDocumentSnapshot : task.getResult()){
+                        userProfile[0] = queryDocumentSnapshot.toObject(Profile.class);
+                        Log.d(TAG, "onComplete: userProfile[0] = " + userProfile[0].getFullname());
+                    }
+
+                } else {
+                    makeSnackBarMessage("Query Failed. Check Logs.");
+                    Log.d(TAG, "failed: task.isSuccessful() = " + task.isSuccessful());
+                }
+            }
+        });
 
 
+        return userProfile[0];
+    }
 
 
     @Override

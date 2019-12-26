@@ -11,6 +11,7 @@ import com.google.firebase.firestore.IgnoreExtraProperties;
 public class Profile implements Parcelable {
 
     String user_id;
+    String profile_id;
     String fullname;
     String description;
     String mobileNo;
@@ -33,6 +34,7 @@ public class Profile implements Parcelable {
     // Implemented method for parcelable
     protected Profile(Parcel in) {
         user_id = in.readString();
+        profile_id = in.readString();
         fullname = in.readString();
         description = in.readString();
         mobileNo = in.readString();
@@ -61,6 +63,7 @@ public class Profile implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(user_id);
+        dest.writeString(profile_id);
         dest.writeString(fullname);
         dest.writeString(description);
         dest.writeString(mobileNo);
@@ -79,6 +82,14 @@ public class Profile implements Parcelable {
 
     public void setUser_id(String user_id) {
         this.user_id = user_id;
+    }
+
+    public String getProfile_id() {
+        return profile_id;
+    }
+
+    public void setProfile_id(String profile_id) {
+        this.profile_id = profile_id;
     }
 
     public String getFullname() {

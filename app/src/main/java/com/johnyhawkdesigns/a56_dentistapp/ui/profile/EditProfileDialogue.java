@@ -95,6 +95,7 @@ public class EditProfileDialogue extends DialogFragment implements View.OnClickL
 
                 break;
             }
+
         }
     }
 
