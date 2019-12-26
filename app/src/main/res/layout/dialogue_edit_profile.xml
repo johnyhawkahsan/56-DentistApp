@@ -14,7 +14,7 @@
         android:src="@mipmap/dentist_icon_adaptive"/>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tilFullName"
+        android:id="@+id/TILfullName"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -29,9 +29,70 @@
     </com.google.android.material.textfield.TextInputLayout>
 
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/TILDescription"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="false"
+            android:inputType="textMultiLine"
+            android:hint="Description" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
 
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/TILmobileNo"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="false"
+            android:inputType="textMultiLine"
+            android:hint="Mobile No" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/TILemail"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="false"
+            android:inputType="textMultiLine"
+            android:hint="Email" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/TILAddress"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="false"
+            android:inputType="textMultiLine"
+            android:hint="Address" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"

@@ -1,5 +1,6 @@
 package com.johnyhawkdesigns.a56_dentistapp;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
@@ -21,30 +22,40 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.johnyhawkdesigns.a56_dentistapp.account.LoginActivity;
+import com.johnyhawkdesigns.a56_dentistapp.models.Profile;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+                implements IMainActivity{
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-
+    //FireBase
+    private FirebaseAuth.AuthStateListener mAuthStateListener;
 
     private AppBarConfiguration mAppBarConfiguration;
 
+    // widgets
     private ImageView navHeaderBackground, navHeaderProfilePic;
     private TextView profileName, profileInfo;
 
+    private View mParentLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        
+        mParentLayout = findViewById(R.id.content_main);
 
         // Setup toolbar for app
         Toolbar toolbar = findViewById(R.id.toolbar);  // Note: Inside styles.xml, we defined AppTheme.NoActionBar and used inside AndroidMANIFEST for MainActivity's theme @style/AppTheme.NoActionBar
@@ -87,6 +98,8 @@ public class MainActivity extends AppCompatActivity {
         profileName.setText("Muhammad Ahsan");
         profileInfo.setText("johnyHawkAhsan@gmail.com");
 
+
+
         // loading header background image
         Glide.with(this).load(R.drawable.nav_menu_header)
                 .transition(new DrawableTransitionOptions()
@@ -103,12 +116,72 @@ public class MainActivity extends AppCompatActivity {
                 .into(navHeaderProfilePic);
 
 
-
-
-
+        setupFirebaseAuth();
 
 
     }
+
+
+    // ======================Setup FireBase and check if user is already logged in========================//
+    private void setupFirebaseAuth() {
+
+        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+
+                // if user is not NULL means user is signed in
+                if (user != null){
+                    Log.d(TAG, "onAuthStateChanged: signed in, Uid is: " + user.getUid());
+                    makeSnackBarMessage("Authenticated with: " + user.getUid());
+
+                } else { // if user == null
+                    // User is signed out / hasn't signed in yet
+                    Log.d(TAG, "onAuthStateChanged: signed_out / hasn't signed in yet ");
+                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                }
+            }
+        };
+    }
+
+
+    @Override
+    public void createNewProfile(String fullname, String description, String mobileNo, String email, String address) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        String userID = FirebaseAuth.getInstance().getUid();
+
+        //You can think of DocumentReference as an object and CollectionReference as a list of objects.
+        DocumentReference newProfileRef = db.collection("profiles") //Create database named "profiles"
+                                                                    .document(); //Tell FireStore you're inserting a new document
+
+        Profile profile = new Profile();
+        profile.setUser_id(userID);
+        profile.setFullname(fullname);
+        profile.setDescription(description);
+        profile.setMobileNo(mobileNo);
+        profile.setEmail(email);
+        profile.setAddress(address);
+
+        // Now upload object to FireStore
+        newProfileRef.set(profile)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()){
+                            Log.d(TAG, "onComplete: Created new profile");
+                            makeSnackBarMessage("Created new Profile");
+                        } else {
+                            makeSnackBarMessage("Failed, Check log");
+                            Log.d(TAG, "Failed: Failed to create profile" );
+                        }
+                    }
+                });
+
+    }
+
 
 
 
@@ -131,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.logout) {
 
             Log.d(TAG, "onOptionsItemSelected: logout");
-            FirebaseAuth.getInstance().signOut();
+            signOut();
             finish(); // Finish this activity
 
             //Redirect the signed out user to Login activity
@@ -154,6 +227,31 @@ public class MainActivity extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, mAppBarConfiguration) || super.onSupportNavigateUp();
     }
 
+
+    private void makeSnackBarMessage(String message){
+        Snackbar.make(mParentLayout, message, Snackbar.LENGTH_SHORT).show();
+    }
+
+
+    // initiate sign out process
+    private void signOut(){
+        Log.d(TAG, "signOut: signing out");
+        FirebaseAuth.getInstance().signOut();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        FirebaseAuth.getInstance().addAuthStateListener(mAuthStateListener);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAuthStateListener != null) {
+            FirebaseAuth.getInstance().removeAuthStateListener(mAuthStateListener);
+        }
+    }
 
 
 }
