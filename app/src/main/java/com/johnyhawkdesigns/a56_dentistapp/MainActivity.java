@@ -25,19 +25,18 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.johnyhawkdesigns.a56_dentistapp.account.LoginActivity;
 import com.johnyhawkdesigns.a56_dentistapp.models.Profile;
+import com.johnyhawkdesigns.a56_dentistapp.utils.Utilities;
 
-import java.util.Collection;
 
 public class MainActivity extends AppCompatActivity
                 implements IMainActivity{
@@ -124,7 +123,6 @@ public class MainActivity extends AppCompatActivity
 
         setupFirebaseAuth();
 
-
     }
 
 
@@ -139,7 +137,7 @@ public class MainActivity extends AppCompatActivity
                 // if user is not NULL means user is signed in
                 if (user != null){
                     Log.d(TAG, "onAuthStateChanged: signed in, Uid is: " + user.getUid());
-                    makeSnackBarMessage("Authenticated with: " + user.getUid());
+                    Utilities.makeSnackBarMessage(mParentLayout,"Authenticated with: " + user.getUid());
 
                 } else { // if user == null
                     // User is signed out / hasn't signed in yet
@@ -178,55 +176,14 @@ public class MainActivity extends AppCompatActivity
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()){
                             Log.d(TAG, "onComplete: Created new profile");
-                            makeSnackBarMessage("Created new Profile");
+                            Utilities.makeSnackBarMessage(mParentLayout, "Created new Profile");
                         } else {
-                            makeSnackBarMessage("Failed, Check log");
+                            Utilities.makeSnackBarMessage(mParentLayout, "Failed, Check log");
                             Log.d(TAG, "Failed: Failed to create profile" );
                         }
                     }
                 });
 
-    }
-
-    @Override
-    public Profile getThisUsersProfile() {
-        Log.d(TAG, "getThisUsersProfile: We need to retrieve Profile of Current User");
-
-        final Profile[] userProfile = {new Profile()};
-
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-        //You can think of DocumentReference as an object and CollectionReference as a list of objects.
-        //// Create a reference to the profiles collection
-        CollectionReference profilesCollectionReference = db.collection("profiles");
-
-        //Searching functionality is a lot better in FireStore, it indexes all the data = First need to "Index" data in Console
-        // Create a query against the collection
-        Query profileQuery = profilesCollectionReference
-                .whereEqualTo("user_id", currentUserID);
-
-        profileQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()){
-                    Log.d(TAG, "onComplete: task.isSuccessful() = " + task.isSuccessful());
-
-                    //Loop through all the received data and add to our list of objects
-                    for (DocumentSnapshot queryDocumentSnapshot : task.getResult()){
-                        userProfile[0] = queryDocumentSnapshot.toObject(Profile.class);
-                        Log.d(TAG, "onComplete: userProfile[0] = " + userProfile[0].getFullname());
-                    }
-
-                } else {
-                    makeSnackBarMessage("Query Failed. Check Logs.");
-                    Log.d(TAG, "failed: task.isSuccessful() = " + task.isSuccessful());
-                }
-            }
-        });
-
-
-        return userProfile[0];
     }
 
 
@@ -248,7 +205,7 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.logout) {
 
             Log.d(TAG, "onOptionsItemSelected: logout");
-            signOut();
+            Utilities.signOut();
             finish(); // Finish this activity
 
             //Redirect the signed out user to Login activity
@@ -272,16 +229,6 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    private void makeSnackBarMessage(String message){
-        Snackbar.make(mParentLayout, message, Snackbar.LENGTH_SHORT).show();
-    }
-
-
-    // initiate sign out process
-    private void signOut(){
-        Log.d(TAG, "signOut: signing out");
-        FirebaseAuth.getInstance().signOut();
-    }
 
     @Override
     public void onStart() {

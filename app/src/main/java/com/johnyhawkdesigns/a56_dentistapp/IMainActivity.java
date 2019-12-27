@@ -9,6 +9,5 @@ import com.johnyhawkdesigns.a56_dentistapp.models.Profile;
 public interface IMainActivity {
 
     void createNewProfile(String fullname, String description, String mobileNo, String email, String address);
-    Profile getThisUsersProfile();
 
 }

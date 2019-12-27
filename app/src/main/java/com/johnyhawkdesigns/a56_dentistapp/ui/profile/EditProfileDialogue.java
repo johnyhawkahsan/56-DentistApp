@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.google.android.material.textfield.TextInputLayout;
 import com.johnyhawkdesigns.a56_dentistapp.IMainActivity;
 import com.johnyhawkdesigns.a56_dentistapp.R;
+import com.johnyhawkdesigns.a56_dentistapp.models.Profile;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,11 +27,25 @@ public class EditProfileDialogue extends DialogFragment implements View.OnClickL
 
     //widgets
     private TextInputLayout TILfullName, TILdescription, TILmobileNo, TILemail, TILaddress;
-    private TextView btnSaveProfile;
+    private TextView btnSaveProfile, btnCancelDialogue;
     private ImageView addProfileImage;
 
     // Reference to our Interface
     private IMainActivity mIMainActivity;
+
+    private Profile mProfile;
+
+    // Constructor for this dialogue using singleton pattern - We are using this pattern because we will later return data using arguments
+    public static EditProfileDialogue newInstance(Profile profile){
+        EditProfileDialogue dialogue = new EditProfileDialogue();
+
+        Bundle args = new Bundle();
+        args.putParcelable("profile", profile);
+        dialogue.setArguments(args);
+
+        Log.d(TAG, "newInstance: send profile object in args form. args = " + args);
+        return dialogue;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -39,6 +54,11 @@ public class EditProfileDialogue extends DialogFragment implements View.OnClickL
         int style = DialogFragment.STYLE_NORMAL;
         int theme = android.R.style.Theme_Holo_Light_Dialog;
         setStyle(style, theme);
+
+        // We get this profile data from ProfileFragment and "cast" it into our mProfile object.
+        mProfile = getArguments().getParcelable("profile");
+        Log.d(TAG, "onCreate: received arguments from ProfileFragment in onCreate method.  mProfile.getFullname()= " + mProfile.getFullname());
+
 
     }
 
@@ -57,9 +77,18 @@ public class EditProfileDialogue extends DialogFragment implements View.OnClickL
         TILaddress = view.findViewById(R.id.TILAddress);
         btnSaveProfile =  view.findViewById(R.id.saveProfile);
         addProfileImage = view.findViewById(R.id.addProfileImage);
+        btnCancelDialogue = view.findViewById(R.id.cancelDialogue);
+        btnCancelDialogue.setOnClickListener(this);
         btnSaveProfile.setOnClickListener(this);
 
         getDialog().setTitle("Edit Profile");
+
+        //Set initial properties of our widgets
+        TILfullName.getEditText().setText(mProfile.getFullname());
+        TILdescription.getEditText().setText(mProfile.getDescription());
+        TILmobileNo.getEditText().setText(mProfile.getMobileNo());
+        TILemail.getEditText().setText(mProfile.getEmail());
+        TILaddress.getEditText().setText(mProfile.getAddress());
 
         return view;
     }
@@ -93,6 +122,11 @@ public class EditProfileDialogue extends DialogFragment implements View.OnClickL
                 }
 
 
+                break;
+            }
+
+            case R.id.cancelDialogue:{
+                getDialog().dismiss();
                 break;
             }
 
