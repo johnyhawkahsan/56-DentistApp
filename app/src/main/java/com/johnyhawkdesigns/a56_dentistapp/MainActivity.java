@@ -153,33 +153,53 @@ public class MainActivity extends AppCompatActivity
 
 
     @Override
-    public void createNewProfile(String fullname, String description, String mobileNo, String email, String address) {
+    public void createNewProfile(Profile newProfile) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         String userID = FirebaseAuth.getInstance().getUid();
 
         //You can think of DocumentReference as an object and CollectionReference as a list of objects.
-        DocumentReference newProfileRef = db.collection("profiles") //Create database named "profiles"
+        DocumentReference newProfileRef = db.collection(Utilities.profiles) //Create database named "profiles"
                                                                     .document(); //Tell FireStore you're inserting a new document
 
-        Profile profile = new Profile();
-        profile.setUser_id(userID);
-        profile.setFullname(fullname);
-        profile.setDescription(description);
-        profile.setMobileNo(mobileNo);
-        profile.setEmail(email);
-        profile.setAddress(address);
 
         // Now upload object to FireStore
-        newProfileRef.set(profile)
+        newProfileRef.set(newProfile)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()){
-                            Log.d(TAG, "onComplete: Created new profile");
+                            Log.d(TAG, "onComplete: Created new profile = " + task.getResult() );
+
                             Utilities.makeSnackBarMessage(mParentLayout, "Created new Profile");
                         } else {
                             Utilities.makeSnackBarMessage(mParentLayout, "Failed, Check log");
                             Log.d(TAG, "Failed: Failed to create profile" );
+                        }
+                    }
+                });
+
+    }
+
+    @Override
+    public void updateProfile(Profile updateProfile) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference profileRef = db.collection("profiles")
+                .document(updateProfile.getProfile_id());
+
+        // update relevant fields in FireStore Database
+        profileRef.update(Utilities.fullname , updateProfile.getFullname(),
+                Utilities.description, updateProfile.getDescription(),
+                Utilities.mobileNo, updateProfile.getMobileNo(),
+                Utilities.email, updateProfile.getEmail(),
+                Utilities.address, updateProfile.getAddress())
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()){
+                            Utilities.makeSnackBarMessage(mParentLayout, "Updated Profile");
+                            Log.d(TAG, "onComplete: SUCCESSFULLY UPDATED = " + task.getResult());
+                        } else {
+                            Log.d(TAG, "onComplete: FAILED");
                         }
                     }
                 });

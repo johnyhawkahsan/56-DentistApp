@@ -8,6 +8,17 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class Utilities {
 
+    // Static fields in FireStore database
+    public static String profiles = "profiles";
+    public static String user_id = "user_id";
+    public static String profile_id = "profile_id";
+    public static String fullname = "fullname";
+    public static String description = "description";
+    public static String mobileNo = "mobileNo";
+    public static String email = "email";
+    public static String address = "address";
+
+
     public static void makeSnackBarMessage(View parentLayout, String message){
         Snackbar.make(parentLayout, message, Snackbar.LENGTH_SHORT).show();
     }

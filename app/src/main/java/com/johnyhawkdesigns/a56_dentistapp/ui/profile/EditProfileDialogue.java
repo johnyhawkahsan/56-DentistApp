@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.FirebaseAuth;
 import com.johnyhawkdesigns.a56_dentistapp.IMainActivity;
 import com.johnyhawkdesigns.a56_dentistapp.R;
 import com.johnyhawkdesigns.a56_dentistapp.models.Profile;
@@ -34,6 +35,7 @@ public class EditProfileDialogue extends DialogFragment implements View.OnClickL
     private IMainActivity mIMainActivity;
 
     private Profile mProfile;
+    private Boolean creatingNewProfile;
 
     // Constructor for this dialogue using singleton pattern - We are using this pattern because we will later return data using arguments
     public static EditProfileDialogue newInstance(Profile profile){
@@ -55,9 +57,12 @@ public class EditProfileDialogue extends DialogFragment implements View.OnClickL
         int theme = android.R.style.Theme_Holo_Light_Dialog;
         setStyle(style, theme);
 
-        // We get this profile data from ProfileFragment and "cast" it into our mProfile object.
-        mProfile = getArguments().getParcelable("profile");
-        Log.d(TAG, "onCreate: received arguments from ProfileFragment in onCreate method.  mProfile.getFullname()= " + mProfile.getFullname());
+        if (getArguments() != null){
+            creatingNewProfile = false;
+            // We get this profile data from ProfileFragment and "cast" it into our mProfile object.
+            mProfile = getArguments().getParcelable("profile");
+            Log.d(TAG, "onCreate: received arguments from ProfileFragment in onCreate method.  mProfile.getFullname()= " + mProfile.getFullname());
+        }
 
 
     }
@@ -107,16 +112,34 @@ public class EditProfileDialogue extends DialogFragment implements View.OnClickL
                 String email = TILemail.getEditText().getText().toString();
                 String address = TILaddress.getEditText().getText().toString();
 
+                // If those textViews are NOT empty
                 if (!TextUtils.isEmpty(fullname) && !TextUtils.isEmpty(description) && !TextUtils.isEmpty(mobileNo) && !TextUtils.isEmpty(email) && !TextUtils.isEmpty(address)){
                     Log.d(TAG, "onClick: Saving data to Firebase");
                     Toast.makeText(getActivity(), "Saving data to firebase", Toast.LENGTH_SHORT).show();
 
-                    // Send this data to MainActivity using interface IMAinActivity
-                    mIMainActivity.createNewProfile(fullname, description, mobileNo, email, address);
+                    Profile newProfile = new Profile();
+                    newProfile.setFullname(fullname);
+                    newProfile.setDescription(description);
+                    newProfile.setMobileNo(mobileNo);
+                    newProfile.setEmail(email);
+                    newProfile.setAddress(address);
+                    newProfile.setUser_id(FirebaseAuth.getInstance().getUid());
+
+
+                    // if creatingNewProfile == true, then launch create method
+                    if (creatingNewProfile){
+                        // Send this data to MainActivity using interface IMAinActivity
+                        mIMainActivity.createNewProfile(newProfile);
+                    }
+                    // creatingNewProfile == false, then launch update method
+                    else {
+                        mIMainActivity.updateProfile(newProfile);
+                    }
+
 
                     getDialog().dismiss(); // close dialog once all fields are saved to firebase
                 }
-                else {
+                else {// if fields are empty
                     Log.d(TAG, "onClick: Fill all fields");
                     Toast.makeText(getActivity(), "Fill all fields", Toast.LENGTH_SHORT).show();
                 }

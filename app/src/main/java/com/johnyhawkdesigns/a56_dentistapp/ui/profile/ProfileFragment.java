@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -18,7 +20,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.johnyhawkdesigns.a56_dentistapp.IMainActivity;
 import com.johnyhawkdesigns.a56_dentistapp.R;
 import com.johnyhawkdesigns.a56_dentistapp.models.Profile;
 import com.johnyhawkdesigns.a56_dentistapp.utils.Utilities;
@@ -40,6 +41,8 @@ public class ProfileFragment extends Fragment {
     ImageView ivProfile;
     TextView tvName, tvDescription, tvMobile2, tvEmail2, tvAddress2;
     Button btnEditProfile;
+    RelativeLayout RelLayoutProfileFragment;
+    private ProgressBar mProgressBar;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_profile, container, false);
@@ -50,6 +53,7 @@ public class ProfileFragment extends Fragment {
         final NavController navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment); // right now I'm not using this
 
         // Initialize widgets
+        RelLayoutProfileFragment = view.findViewById(R.id.RelLayoutProfileFragment);
         ivProfile = view.findViewById(R.id.ivProfile);
         tvName = view.findViewById(R.id.tvName);
         tvDescription = view.findViewById(R.id.tvDescription);
@@ -57,9 +61,11 @@ public class ProfileFragment extends Fragment {
         tvEmail2 = view.findViewById(R.id.tvEmail2);
         tvAddress2 = view.findViewById(R.id.tvAddress2);
         btnEditProfile = view.findViewById(R.id.btnEditProfile);
+        mProgressBar = view.findViewById(R.id.progressBarProfileFragment);
 
-
-
+        // Initially, we only want ProgressBar to be visible because or Views are not yet been populated yet from FireStore query
+        RelLayoutProfileFragment.setVisibility(View.INVISIBLE);
+        mProgressBar.setVisibility(View.VISIBLE);
 
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -97,6 +103,14 @@ public class ProfileFragment extends Fragment {
                         tvEmail2.setText(email);
                         tvAddress2.setText(address);
 
+                        // Once data is received, we want Progress bar to disappear and layout to appear.
+                        if (mProgressBar.getVisibility() == View.VISIBLE) {
+                            mProgressBar.setVisibility(View.INVISIBLE);
+                        }
+
+                        if (RelLayoutProfileFragment.getVisibility() == View.INVISIBLE){
+                            RelLayoutProfileFragment.setVisibility(View.VISIBLE);
+                        }
                     }
 
                 } else {
@@ -125,6 +139,11 @@ public class ProfileFragment extends Fragment {
 
 
 
+
+    // Method to show hide progress bar
+    private void hideProgressBar() {
+
+    }
 
 
 
