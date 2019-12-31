@@ -41,7 +41,6 @@
             android:layout_below="@+id/tvName"
             android:layout_centerHorizontal="true"
             android:gravity="center"
-            android:text="I love donuts and I have my own TV show"
             android:textSize="18sp"
             android:textStyle="italic" />
 
@@ -75,7 +74,6 @@
                     android:id="@+id/tvMobile2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="0344-9085371"
                     android:textSize="14sp"
                     android:textStyle="bold" />
 
@@ -107,7 +105,6 @@
                     android:id="@+id/tvEmail2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="johnyhawkahsan@gmail.com"
                     android:textSize="14sp"
                     android:textStyle="bold" />
 
@@ -146,7 +143,6 @@
                 android:id="@+id/tvAddress2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Shadbagh Colony, Outside Yekkatoot, Street 1, House 778-B, Peshawar"
                 android:textSize="14sp"
                 android:layout_marginTop="4dp"
                 android:textStyle="bold" />

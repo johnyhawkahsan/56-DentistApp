@@ -41,11 +41,20 @@ public class EditProfileDialogue extends DialogFragment implements View.OnClickL
     public static EditProfileDialogue newInstance(Profile profile){
         EditProfileDialogue dialogue = new EditProfileDialogue();
 
+        // If we are editing a current profile
         Bundle args = new Bundle();
         args.putParcelable("profile", profile);
         dialogue.setArguments(args);
 
         Log.d(TAG, "newInstance: send profile object in args form. args = " + args);
+        return dialogue;
+    }
+
+    // Constructor if we are creating new profile
+    public static EditProfileDialogue newInstance(){
+        EditProfileDialogue dialogue = new EditProfileDialogue();
+
+        Log.d(TAG, "newInstance: NO ARGUMENTS because we are creating new profile." );
         return dialogue;
     }
 
@@ -86,14 +95,20 @@ public class EditProfileDialogue extends DialogFragment implements View.OnClickL
         btnCancelDialogue.setOnClickListener(this);
         btnSaveProfile.setOnClickListener(this);
 
-        getDialog().setTitle("Edit Profile");
+        if (getArguments() != null){
+            getDialog().setTitle("Create new profile");
+        }
+        else {
+            getDialog().setTitle("Edit Profile");
 
-        //Set initial properties of our widgets
-        TILfullName.getEditText().setText(mProfile.getFullname());
-        TILdescription.getEditText().setText(mProfile.getDescription());
-        TILmobileNo.getEditText().setText(mProfile.getMobileNo());
-        TILemail.getEditText().setText(mProfile.getEmail());
-        TILaddress.getEditText().setText(mProfile.getAddress());
+            //Set initial properties of our widgets
+            TILfullName.getEditText().setText(mProfile.getFullname());
+            TILdescription.getEditText().setText(mProfile.getDescription());
+            TILmobileNo.getEditText().setText(mProfile.getMobileNo());
+            TILemail.getEditText().setText(mProfile.getEmail());
+            TILaddress.getEditText().setText(mProfile.getAddress());
+
+        }
 
         return view;
     }

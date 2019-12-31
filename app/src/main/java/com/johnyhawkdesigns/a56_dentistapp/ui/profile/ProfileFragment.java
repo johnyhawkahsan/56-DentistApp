@@ -16,14 +16,14 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.johnyhawkdesigns.a56_dentistapp.R;
 import com.johnyhawkdesigns.a56_dentistapp.models.Profile;
 import com.johnyhawkdesigns.a56_dentistapp.utils.Utilities;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
@@ -34,7 +34,8 @@ public class ProfileFragment extends Fragment {
 
     private static final String TAG = ProfileFragment.class.getSimpleName();
 
-    final Profile[] currentUserProfile = {new Profile()}; // This is an array because our result is returned in array form
+    private Profile currentUserProfile =new Profile(); // This is an array because our result is returned in array form
+    private Boolean currentProfileExists = false;
 
 
     // Widgets
@@ -68,12 +69,13 @@ public class ProfileFragment extends Fragment {
         mProgressBar.setVisibility(View.VISIBLE);
 
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
         String currentUserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
+        /*
         // You can think of DocumentReference as an object and CollectionReference as a list of objects.
         // Create a reference to the profiles collection
-        CollectionReference profilesCollectionReference = db.collection("profiles");
+        CollectionReference profilesCollectionReference = db.collection(Utilities.profiles);
 
         // Searching functionality is a lot better in FireStore, it indexes all the data = First need to "Index" data in Console
         // Create a query against the collection
@@ -88,14 +90,52 @@ public class ProfileFragment extends Fragment {
 
                     //Loop through all the received data and add to our list of objects
                     for (DocumentSnapshot queryDocumentSnapshot : task.getResult()) {
+
                         currentUserProfile[0] = queryDocumentSnapshot.toObject(Profile.class); // convert queryDocumentSnapshot to an object
                         Log.d(TAG, "onComplete: userProfile[0] = " + currentUserProfile[0].getFullname());
 
-                        String name = currentUserProfile[0].getFullname();
-                        String description = currentUserProfile[0].getDescription();
-                        String mobile = currentUserProfile[0].getMobileNo();
-                        String email = currentUserProfile[0].getEmail();
-                        String address = currentUserProfile[0].getAddress();
+                        // Get id of current document.
+                        queryDocID[0] = queryDocumentSnapshot.getId();
+                        Log.d(TAG, "onComplete: queryDocID = " + queryDocID[0]); // WORKING
+
+                        // Once data is received, we want Progress bar to disappear and layout to appear.
+                        hideProgressBar()
+                        showRelativeLayout();
+
+                    }
+
+                } else {
+                    Utilities.makeSnackBarMessage(view, "Query Failed. Check Logs.");
+                    Log.d(TAG, "failed: task not successful = " + task.isSuccessful());
+                }
+            }
+        });
+         */
+
+        DocumentReference documentReference = db.collection(Utilities.profiles).document(currentUserID);
+
+        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Log.d(TAG, "Document exists!");
+
+                        currentProfileExists = true;
+
+                        // Cast this document into object
+                        currentUserProfile = document.toObject(Profile.class);
+
+                        String currentDocumentID = document.getId();
+                        Log.d(TAG, "onComplete: currentDocumentID = " + currentDocumentID);
+
+
+                        String name = currentUserProfile.getFullname();
+                        String description = currentUserProfile.getDescription();
+                        String mobile = currentUserProfile.getMobileNo();
+                        String email = currentUserProfile.getEmail();
+                        String address = currentUserProfile.getAddress();
 
                         tvName.setText(name);
                         tvDescription.setText(description);
@@ -104,32 +144,50 @@ public class ProfileFragment extends Fragment {
                         tvAddress2.setText(address);
 
                         // Once data is received, we want Progress bar to disappear and layout to appear.
-                        if (mProgressBar.getVisibility() == View.VISIBLE) {
-                            mProgressBar.setVisibility(View.INVISIBLE);
-                        }
+                        hideProgressBar();
+                        showRelativeLayout();
 
-                        if (RelLayoutProfileFragment.getVisibility() == View.INVISIBLE){
-                            RelLayoutProfileFragment.setVisibility(View.VISIBLE);
-                        }
+                    } else {
+                        Log.d(TAG, "Document does not exist!");
+                        btnEditProfile.setText("Add NEW Profile");
+                        currentProfileExists = false;
+
+                        // we want Progress bar to disappear and layout to appear.
+                        hideProgressBar();
+                        showRelativeLayout();
+
                     }
-
-                } else {
-                    Utilities.makeSnackBarMessage(view, "Query Failed. Check Logs.");
-                    Log.d(TAG, "failed: task not successfull = " + task.isSuccessful());
+                } else { // If task NOT Successful
+                    Log.d(TAG, "Failed with: ", task.getException());
                 }
             }
         });
 
 
+
         // Another method to navigate to destination using NavigationOnClickListener
-        //btnEditProfile.setOnClickListener(Navigation.createNavigateOnClickListener(R.id.nav_edit_profile_dialog));
+        // btnEditProfile.setOnClickListener(Navigation.createNavigateOnClickListener(R.id.nav_edit_profile_dialog));
         btnEditProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EditProfileDialogue dialogue = EditProfileDialogue.newInstance(currentUserProfile[0]);
-                dialogue.show(getFragmentManager(), "Profile");
+
                 //Navigation.findNavController(view).navigate(R.id.nav_edit_profile_dialog); // Both methods are working to navigate to edit profile dialogue
                 //navController.navigate(R.id.nav_edit_profile_dialog);//navigate to edit profile dialog using "NAVCONTROLLER"
+
+
+                // We are editing profile
+                if (currentProfileExists){
+                    EditProfileDialogue dialogue = EditProfileDialogue.newInstance(currentUserProfile);
+                    dialogue.show(getFragmentManager(), "Profile");
+                }
+                // IF we are adding a new profile
+                else {
+                    EditProfileDialogue dialogue = EditProfileDialogue.newInstance();
+                    dialogue.show(getFragmentManager(), "Profile");
+                }
+
+
+
             }
         });
 
@@ -138,14 +196,18 @@ public class ProfileFragment extends Fragment {
     }
 
 
-
-
-    // Method to show hide progress bar
-    private void hideProgressBar() {
-
+    public void hideProgressBar(){
+        // Once data is received, we want Progress bar to disappear and layout to appear.
+        if (mProgressBar.getVisibility() == View.VISIBLE) {
+            mProgressBar.setVisibility(View.INVISIBLE);
+        }
     }
 
-
+    public void showRelativeLayout(){
+        if (RelLayoutProfileFragment.getVisibility() == View.INVISIBLE){
+            RelLayoutProfileFragment.setVisibility(View.VISIBLE);
+        }
+    }
 
 
 }

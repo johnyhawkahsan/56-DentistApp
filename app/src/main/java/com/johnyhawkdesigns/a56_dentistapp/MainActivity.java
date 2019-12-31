@@ -154,12 +154,15 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void createNewProfile(Profile newProfile) {
+        Log.d(TAG, "createNewProfile: ");
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        String userID = FirebaseAuth.getInstance().getUid();
 
+        // NOTE NOTE NOTE: I am adding a custom doc ID using .set method, instead of add method which automatically generates a key.
+        // .set also generates a key if we use .document() only
         //You can think of DocumentReference as an object and CollectionReference as a list of objects.
-        DocumentReference newProfileRef = db.collection(Utilities.profiles) //Create database named "profiles"
-                                                                    .document(); //Tell FireStore you're inserting a new document
+        final DocumentReference newProfileRef = db.collection(Utilities.profiles) //Create database named "profiles"
+                                                                    .document(newProfile.getUser_id()); //Tell FireStore you're inserting a new document with custom document ID
+
 
 
         // Now upload object to FireStore
@@ -169,22 +172,22 @@ public class MainActivity extends AppCompatActivity
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()){
                             Log.d(TAG, "onComplete: Created new profile = " + task.getResult() );
-
                             Utilities.makeSnackBarMessage(mParentLayout, "Created new Profile");
+                            Log.d(TAG, "onComplete: new doc ID is = " + newProfileRef.getId());
                         } else {
                             Utilities.makeSnackBarMessage(mParentLayout, "Failed, Check log");
                             Log.d(TAG, "Failed: Failed to create profile" );
                         }
                     }
                 });
-
     }
 
     @Override
     public void updateProfile(Profile updateProfile) {
+        Log.d(TAG, "updateProfile: ");
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference profileRef = db.collection("profiles")
-                .document(updateProfile.getProfile_id());
+                .document(updateProfile.getUser_id()); // because user id is same as this document's id
 
         // update relevant fields in FireStore Database
         profileRef.update(Utilities.fullname , updateProfile.getFullname(),
