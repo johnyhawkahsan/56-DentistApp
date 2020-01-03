@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentManager;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -35,6 +36,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.johnyhawkdesigns.a56_dentistapp.account.LoginActivity;
 import com.johnyhawkdesigns.a56_dentistapp.models.Profile;
+import com.johnyhawkdesigns.a56_dentistapp.ui.dashboard.DashboardFragment;
 import com.johnyhawkdesigns.a56_dentistapp.utils.Utilities;
 
 
@@ -46,13 +48,19 @@ public class MainActivity extends AppCompatActivity
     //FireBase
     private FirebaseAuth.AuthStateListener mAuthStateListener;
 
-    private AppBarConfiguration mAppBarConfiguration;
 
     // widgets
     private ImageView navHeaderBackground, navHeaderProfilePic;
     private TextView profileName, profileInfo;
-
     private View mParentLayout;
+
+    private AppBarConfiguration mAppBarConfiguration;
+    DrawerLayout drawer;
+    NavigationView navigationView;
+    View headerView;
+
+    NavController navController;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,9 +75,9 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar); // I had error at this line after using splashscreen, so I used Theme.AppCompat.Light.NoActionBar in styles for AppTheme
 
         // Setup DrawerLayout and NavigationView
-        final DrawerLayout drawer = findViewById(R.id.drawer_layout); // androidx.drawerlayout.widget.DrawerLayout inside activity_main.xml wich also includes (AppBarMain + NavigationView)
-        NavigationView navigationView = findViewById(R.id.nav_view);  // com.google.android.material.navigation.NavigationView inside activity_main.xml
-        View headerView = navigationView.getHeaderView(0); // this is used to get TextView's and ImageView's inside our NavigationView
+        drawer = findViewById(R.id.drawer_layout); // androidx.drawerlayout.widget.DrawerLayout inside activity_main.xml which also includes (AppBarMain + NavigationView)
+        navigationView = findViewById(R.id.nav_view);  // com.google.android.material.navigation.NavigationView inside activity_main.xml
+        headerView = navigationView.getHeaderView(0); // this is used to get TextView's and ImageView's inside our NavigationView
 
 
         // Passing each menu ID as a set of Ids because each menu should be considered as top level destinations.
@@ -81,9 +89,11 @@ public class MainActivity extends AppCompatActivity
                 .build();
 
         // Setup Navigation Component controller
-        final NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController); // Register NavigationView with NavController so we may use menu id's in navigation_menu
+
+
 
         // -------------Setup Widgets inside NavigationView -> HeaderView ------------------ //
         profileName = headerView.findViewById(R.id.profileName); // instead of using only (findViewByID), we use (headerView.findViewByID)
@@ -153,7 +163,7 @@ public class MainActivity extends AppCompatActivity
 
 
     @Override
-    public void createNewProfile(Profile newProfile) {
+    public void createNewProfile(final Profile newProfile) {
         Log.d(TAG, "createNewProfile: ");
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -164,7 +174,6 @@ public class MainActivity extends AppCompatActivity
                                                                     .document(newProfile.getUser_id()); //Tell FireStore you're inserting a new document with custom document ID
 
 
-
         // Now upload object to FireStore
         newProfileRef.set(newProfile)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -173,7 +182,12 @@ public class MainActivity extends AppCompatActivity
                         if (task.isSuccessful()){
                             Log.d(TAG, "onComplete: Created new profile = " + task.getResult() );
                             Utilities.makeSnackBarMessage(mParentLayout, "Created new Profile");
-                            Log.d(TAG, "onComplete: new doc ID is = " + newProfileRef.getId());
+                            Log.d(TAG, "onComplete: new doc ID is = " + newProfileRef.getId() + ", UserID is = " + newProfile.getUser_id());
+
+                            // Navigate to Dashboard
+                            navController.navigate(R.id.nav_dashboard);
+
+
                         } else {
                             Utilities.makeSnackBarMessage(mParentLayout, "Failed, Check log");
                             Log.d(TAG, "Failed: Failed to create profile" );
@@ -200,9 +214,15 @@ public class MainActivity extends AppCompatActivity
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()){
                             Utilities.makeSnackBarMessage(mParentLayout, "Updated Profile");
-                            Log.d(TAG, "onComplete: SUCCESSFULLY UPDATED = " + task.getResult());
+                            Log.d(TAG, "onComplete: SUCCESSFULLY UPDATED");
+
+                            // Navigate to Dashboard
+                            navController.navigate(R.id.nav_dashboard);
+
                         } else {
                             Log.d(TAG, "onComplete: FAILED");
+                            // Navigate to Dashboard
+                            navController.navigate(R.id.nav_dashboard);
                         }
                     }
                 });

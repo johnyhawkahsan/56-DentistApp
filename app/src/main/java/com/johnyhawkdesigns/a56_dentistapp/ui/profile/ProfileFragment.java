@@ -114,11 +114,13 @@ public class ProfileFragment extends Fragment {
 
         DocumentReference documentReference = db.collection(Utilities.profiles).document(currentUserID);
 
+        // Search for current document and check if it even exists
         documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
+
                     if (document.exists()) {
                         Log.d(TAG, "Document exists!");
 
@@ -177,12 +179,12 @@ public class ProfileFragment extends Fragment {
 
                 // We are editing profile
                 if (currentProfileExists){
-                    EditProfileDialogue dialogue = EditProfileDialogue.newInstance(currentUserProfile);
+                    EditProfileDialogue dialogue = EditProfileDialogue.newInstance(currentUserProfile); // In this instance, we are passing profile object
                     dialogue.show(getFragmentManager(), "Profile");
                 }
                 // IF we are adding a new profile
                 else {
-                    EditProfileDialogue dialogue = EditProfileDialogue.newInstance();
+                    EditProfileDialogue dialogue = EditProfileDialogue.newInstance(); // In this instance, we are not passing any object
                     dialogue.show(getFragmentManager(), "Profile");
                 }
 

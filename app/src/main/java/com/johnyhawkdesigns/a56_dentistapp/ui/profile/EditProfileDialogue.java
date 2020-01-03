@@ -66,11 +66,18 @@ public class EditProfileDialogue extends DialogFragment implements View.OnClickL
         int theme = android.R.style.Theme_Holo_Light_Dialog;
         setStyle(style, theme);
 
-        if (getArguments() != null){
+        Bundle arguments = getArguments();
+
+        if (arguments != null && arguments.containsKey("profile")){
             creatingNewProfile = false;
             // We get this profile data from ProfileFragment and "cast" it into our mProfile object.
-            mProfile = getArguments().getParcelable("profile");
+            mProfile = arguments.getParcelable("profile");
             Log.d(TAG, "onCreate: received arguments from ProfileFragment in onCreate method.  mProfile.getFullname()= " + mProfile.getFullname());
+        }
+        // if no arguments, then we are creating a new profile
+        else {
+            creatingNewProfile = true;
+            Log.d(TAG, "onCreate: NO Arguments. creatingNewProfile = true");
         }
 
 
@@ -95,7 +102,7 @@ public class EditProfileDialogue extends DialogFragment implements View.OnClickL
         btnCancelDialogue.setOnClickListener(this);
         btnSaveProfile.setOnClickListener(this);
 
-        if (getArguments() != null){
+        if (creatingNewProfile){
             getDialog().setTitle("Create new profile");
         }
         else {
