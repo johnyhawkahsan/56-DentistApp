@@ -1,125 +1,130 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:padding="10dp">
 
-    <ImageView
-        android:id="@+id/addProfileImage"
-        android:layout_gravity="center"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@mipmap/dentist_icon_adaptive"/>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/TILfullName"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:baselineAligned="false"
-            android:inputType="textMultiLine"
-            android:hint="Full Name" />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/TILDescription"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:baselineAligned="false"
-            android:inputType="textMultiLine"
-            android:hint="Description" />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/TILmobileNo"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:baselineAligned="false"
-            android:inputType="textMultiLine"
-            android:hint="Mobile No" />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/TILemail"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:baselineAligned="false"
-            android:inputType="textMultiLine"
-            android:hint="Email" />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/TILAddress"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:baselineAligned="false"
-            android:inputType="textMultiLine"
-            android:hint="Address" />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="25dp">
+        android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <ImageView
+            android:id="@+id/addProfileImage"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center"
+            android:contentDescription="@string/profileimage"
+            android:src="@mipmap/dentist_icon_adaptive" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/TILfullName"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false"
+                android:hint="Full Name"
+                android:inputType="textMultiLine" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/TILDescription"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false"
+                android:hint="Description"
+                android:inputType="textMultiLine" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/TILmobileNo"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false"
+                android:hint="Mobile No"
+                android:inputType="textMultiLine" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/TILemail"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false"
+                android:hint="Email"
+                android:inputType="textMultiLine" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/TILAddress"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false"
+                android:hint="Address"
+                android:inputType="textMultiLine" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/linkBlue"
-            android:textSize="15sp"
-            android:text="SAVE"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="10dp"
-            android:id="@+id/saveProfile"/>
+            android:layout_marginTop="25dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/red3"
-            android:textSize="15sp"
-            android:text="CANCEL"
-            android:layout_marginLeft="10dp"
-            android:id="@+id/cancelDialogue"/>
+            <TextView
+                android:id="@+id/saveProfile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dp"
+                android:text="SAVE"
+                android:textColor="@color/linkBlue"
+                android:textSize="15sp" />
 
-    </RelativeLayout>
+            <TextView
+                android:id="@+id/cancelDialogue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="CANCEL"
+                android:textColor="@color/red3"
+                android:textSize="15sp" />
 
-</LinearLayout>
+        </RelativeLayout>
+
+    </LinearLayout>
 
 
+</ScrollView>

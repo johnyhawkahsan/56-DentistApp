@@ -12,7 +12,10 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,6 +27,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,10 +39,16 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.johnyhawkdesigns.a56_dentistapp.account.LoginActivity;
 import com.johnyhawkdesigns.a56_dentistapp.models.Profile;
 import com.johnyhawkdesigns.a56_dentistapp.ui.dashboard.DashboardFragment;
 import com.johnyhawkdesigns.a56_dentistapp.utils.Utilities;
+
+import java.io.IOException;
 
 
 public class MainActivity extends AppCompatActivity
@@ -47,7 +58,13 @@ public class MainActivity extends AppCompatActivity
 
     //FireBase
     private FirebaseAuth.AuthStateListener mAuthStateListener;
+    private FirebaseStorage firebaseStorage;
+    private StorageReference storageReference;
 
+    private byte[] mUploadBytes; //This is what we are going to upload to FireBase
+
+    Uri uploadImageFirebaseURI;
+    Bitmap uploadImageBitmap;
 
     // widgets
     private ImageView navHeaderBackground, navHeaderProfilePic;
@@ -197,10 +214,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void updateProfile(Profile updateProfile) {
+    public void updateProfile(final Profile updateProfile) {
         Log.d(TAG, "updateProfile: ");
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        DocumentReference profileRef = db.collection("profiles")
+        DocumentReference profileRef = db.collection(Utilities.profiles)
                 .document(updateProfile.getUser_id()); // because user id is same as this document's id
 
         // update relevant fields in FireStore Database
@@ -227,6 +244,91 @@ public class MainActivity extends AppCompatActivity
                     }
                 });
 
+        if (updateProfile.getProfileImageUri() != null){
+
+            Log.d(TAG, "updateProfile: NOW Need to upload this separately");
+
+            try {
+                Uri uploadImageURI = updateProfile.getProfileImageUri();
+                uploadImageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver() , uploadImageURI);
+
+                mUploadBytes = Utilities.getBytesFromBitmap(uploadImageBitmap, 100); // Get compressed byte array from bitmap
+                
+            }  catch (IOException e){
+                Log.d(TAG, "updateProfile: " + e.getMessage());
+            }
+
+
+            Uri uploadFileUri = updateProfile.getProfileImageUri();
+            Log.d(TAG, "updateProfile: putting file to Firebase Storage = " + uploadFileUri.getLastPathSegment());
+
+            // Initialize Storage
+            firebaseStorage = FirebaseStorage.getInstance();
+            //storageReference = firebaseStorage.getReference(Utilities.ProfileImagesDir);
+            storageReference = firebaseStorage.getReference().child("profileImages/"
+                    + FirebaseAuth.getInstance().getCurrentUser().getUid() );
+
+            UploadTask uploadTask = storageReference.putFile(uploadFileUri);
+            //UploadTask uploadTask = storageReference.putBytes(mUploadBytes);  // Instead of URI, I am trying to use byteArray[] method
+            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                    storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            uploadImageFirebaseURI = uri;
+                            Log.d(TAG, "onSuccess: uri= "+ uri.toString());
+
+                            // AFTER FILE IS UPLOADED, WE NEED TO UPLOAD IT'S URL AS WELL
+                            // upload URI of this uploaded file
+                            saveUploadUrlToFirebaseDatabase(uri.toString(), updateProfile.getUser_id() );
+
+                        }
+                    });
+
+                }
+            });
+
+            uploadTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d(TAG, "onFailure: e = " + e.getMessage());
+                }
+            });
+
+            uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onProgress(@NonNull UploadTask.TaskSnapshot taskSnapshot) {
+                    Log.d(TAG, "onProgress: tas = " + taskSnapshot.getUploadSessionUri());
+                }
+            });
+
+
+        }
+
+    }
+
+    // Method to Upload Image URL to FireStore DB after successfully uploading the file to Storage
+    private void saveUploadUrlToFirebaseDatabase(String firebaseUriStr, String currentUserID) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference profileRef = db.collection(Utilities.profiles)
+                .document(currentUserID); // because user id is same as this document's id
+
+        profileRef.update
+                (Utilities.profileImageUri, firebaseUriStr)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "onSuccess: IMAGE URI UPLOADED");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "onFailure: IMAGE URI NOT UPLOADED");
+                    }
+                });
     }
 
 

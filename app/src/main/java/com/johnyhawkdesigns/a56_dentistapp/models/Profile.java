@@ -1,6 +1,7 @@
 package com.johnyhawkdesigns.a56_dentistapp.models;
 
 
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -16,14 +17,16 @@ public class Profile implements Parcelable {
     String mobileNo;
     String email;
     String address;
+    Uri profileImageUri;
 
 
-    public Profile(String fullname, String description, String mobileNo, String email, String address) {
+    public Profile(String fullname, String description, String mobileNo, String email, String address, Uri profileImageUri) {
         this.fullname = fullname;
         this.description = description;
         this.mobileNo = mobileNo;
         this.email = email;
         this.address = address;
+        this.profileImageUri = profileImageUri;
     }
 
     public Profile() {
@@ -79,6 +82,14 @@ public class Profile implements Parcelable {
 
     public void setUser_id(String user_id) {
         this.user_id = user_id;
+    }
+
+    public Uri getProfileImageUri() {
+        return profileImageUri;
+    }
+
+    public void setProfileImageUri(Uri profileImageUri) {
+        this.profileImageUri = profileImageUri;
     }
 
     public String getFullname() {
